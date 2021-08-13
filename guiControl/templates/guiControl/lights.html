@@ -1,0 +1,53 @@
+{% extends 'guiControl/base.html' %}
+
+{% block title %}Terra- Lights{% endblock %}
+{% block pageTitle %}Lights{% endblock %}
+
+{% block content %}Here you will change the lights
+<form method="post" ,action="#">
+    {% csrf_token %}
+    <table style="width:100%">
+        <tr>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Pi Pin No.</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Delete</th>
+        </tr>           
+
+        {% for inter in intervals %}
+        <tr>
+            <td>{{inter.name}}</td>
+            <td>{{inter.status}}</td>
+            <td>{{inter.pin_number}}</td>
+            <td>{{inter.start_time}}</td>
+            <td>{{inter.end_time}}</td>
+            <td><input type="checkbox" name="delete-inter_{{inter.id}}"></button></td>
+        </tr>       
+        {%endfor%}
+    </table>
+    <button type="submit"  name="delete_intervals" value='delete_intervals'>Delete Selected</button>
+</form>
+
+<br>
+<h3>Create new interval</h3>
+<form method="post" ,action="#">
+    {% csrf_token %}
+    <a>Interval name</a>
+    <input type="text" name="interval_name" required>
+    <a>Pi pin number</a>
+    <input type="number" name="pin_number" min='1' max='40' required>
+    <a>Start time</a>
+    <!-- To allow seconds in the time fiels, add the prop: step='1' -->
+    <input type="time" name="start_time" required>   
+    <a>End time</a>
+    <input type="time" name="end_time" required>
+    
+    <button type="submit"  name="submit" value='submit_data'>Submit</button>
+    <button type="reset"  name="cancel" value='cancel_form'>Cancel</button>
+</form>
+
+
+{% endblock %}
+

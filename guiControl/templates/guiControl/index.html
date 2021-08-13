@@ -1,0 +1,55 @@
+{% extends 'guiControl/base.html' %}
+
+{% block title %}Terra- Home{% endblock %}
+{% block pageTitle %}Home Page{% endblock %}
+
+{% block content %}
+<p>Temp:</p>
+<p>Humidety:</p>
+
+<form>
+    
+    <table>
+        <tr>
+            <th>Type</th>
+            <th>Switch</th>
+        </tr>
+        <tr>
+            <td>Lights</td>
+            <td>
+                <input type="radio" id="on" name="lights_switch" value="on">
+                <label for="on">On</label><br>
+                <input type="radio" id="timer" name="lights_switch" value="timer">
+                <label for="timer">Timer</label><br>
+                <input type="radio" id="off" name="lights_switch" value="off">
+                <label for="off">Off</label>  
+            </td>
+        </tr>
+        <tr>
+            <td>Fans</td>
+            <td>
+                <input type="radio" id="on" name="fans_switch" value="on">
+                <label for="on">On</label><br>
+                <input type="radio" id="timer" name="fans_switch" value="timer">
+                <label for="timer">Timer</label><br>
+                <input type="radio" id="off" name="fans_switch" value="off">
+                <label for="off">Off</label>
+            </td>
+        </tr>
+        <tr>
+            <td>Misting</td>
+            <td>
+                <input type="radio" id="on" name="misting_switch" value="on">
+                <label for="on">On</label><br>
+                <input type="radio" id="timer" name="misting_switch" value="timer">
+                <label for="timer">Timer</label><br>
+                <input type="radio" id="off" name="misting_switch" value="off">
+                <label for="off">Off</label>
+            </td>
+        </tr>
+        
+    </table>
+</form> 
+        
+{% endblock %}
+
