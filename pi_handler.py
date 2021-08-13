@@ -16,8 +16,8 @@ while True:
     sleep(0.5)
     now = datetime.now().time().replace(microsecond=0)
     for interval in Light_interval.objects.all():
-        GPIO.setup(light_pin, GPIO.OUT)
         light_pin = interval.pin_number
+        GPIO.setup(light_pin, GPIO.OUT)
 
         if interval.start_time <= now and now <= interval.end_time:
             GPIO.output(light_pin, GPIO.HIGH)
