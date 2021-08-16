@@ -49,13 +49,14 @@ def misting_handler(switches):
 def read_sensor():
     pass
 
-def screen_output(curr_temp, curr_humi):
+def screen_output(mylcd,curr_temp, curr_humi):
     # TODO: implement a timer for the screen
-
-    mylcd = I2C_LCD_driver.lcd()
+    mylcd.lcd_clear()   # Might be useless. should be removed
+    
     mylcd.lcd_display_string(f"Temp- {curr_temp} \n Humidity- {curr_humi}", 1)
     mylcd.lcd_display_string(f"Humidity- {curr_humi}", 2)
 
+mylcd = I2C_LCD_driver.lcd()
 while True:
     sleep(0.5)
     now = datetime.now().time().replace(microsecond=0)
@@ -66,6 +67,6 @@ while True:
     fans_handler(switches)
     misting_handler(switches)
 
-    screen_output("30.1", "100%")   # TODO: implement a sensor read for this data, then save tp DB and display
+    screen_output(mylcd,"30.1", "100%")   # TODO: implement a sensor read for this data, then save tp DB and display
 
 
