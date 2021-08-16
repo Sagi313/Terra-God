@@ -54,6 +54,7 @@ def screen_output(curr_temp, curr_humi):
 
     mylcd = I2C_LCD_driver.lcd()
     mylcd.lcd_display_string(f"Temp- {curr_temp} \n Humidity- {curr_humi}", 1)
+    mylcd.lcd_display_string(f"Humidity- {curr_humi}", 2)
 
 while True:
     sleep(0.5)
