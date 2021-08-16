@@ -1,10 +1,27 @@
-from guiControl.models import Light_interval
+from guiControl.models import Humi_sensor, Led_screen, Light_interval, Terra_switches
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 import os
 
 
-def index(response):
+def index(response):    
+    switches = Terra_switches.objects.get(id=1)
+    
+    if response.method == 'POST':
+        if "lights_switch_timer" in  response.POST:
+            switches.lights_switch = "timer"
+
+        if "lights_switch_on" in  response.POST:
+            switches.lights_switch = "on"
+
+        if "lights_switch_off" in  response.POST:
+            switches.lights_switch = "off"
+        
+        switches.save()
+        return HttpResponseRedirect('/')
+
+
+
     return render(response, "guiControl/index.html", {})
 
 def lights(response):
@@ -25,7 +42,6 @@ def lights(response):
             for key in response.POST:
                 if "delete-inter_" in key:
                     to_delete_name = key.split("_")[1]
-                    print(f"Hereee- {to_delete_name}", flush=True)
                     to_delete_inter = Light_interval.objects.get(id=int(to_delete_name))
                     to_delete_inter.delete()
 
@@ -42,3 +58,23 @@ def misting(response):
 
 def fans(response):
     return render(response, "guiControl/fans.html", {})
+
+def settings(response):
+
+    sensor = Humi_sensor.objects.get(id=1)
+    screen = Led_screen.objects.get(id=1)
+
+    if response.method == 'POST':
+        if response.POST.get("apply_screen"):
+            screen.pin_number = response.POST.get('screen_pin_num')
+            screen.start_time = response.POST.get('screen_start')
+            screen.end_time = response.POST.get('screen_end')
+            screen.save()
+        
+        if response.POST.get("apply_sensor"):
+            sensor.pin_number = response.POST.get('sensor_pin_num')
+            sensor.save()
+    
+        return HttpResponseRedirect('/settings')
+    
+    return render(response, "guiControl/settings.html", {'sensor': sensor, 'screen': screen})

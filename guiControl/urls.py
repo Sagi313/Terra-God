@@ -8,5 +8,6 @@ urlpatterns = [
     path('lights/', views.lights, name='Lights'),
     path('fans/', views.fans, name='fans'),
     path('misting/', views.misting, name='misting'),
+    path('settings/', views.settings, name='settings'),
 ]
 

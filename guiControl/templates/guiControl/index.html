@@ -7,8 +7,10 @@
 <p>Temp:</p>
 <p>Humidety:</p>
 
-<form>
-    
+<form method="post" ,action="#">
+
+{% csrf_token %}
+
     <table>
         <tr>
             <th>Type</th>
@@ -17,34 +19,25 @@
         <tr>
             <td>Lights</td>
             <td>
-                <input type="radio" id="on" name="lights_switch" value="on">
-                <label for="on">On</label><br>
-                <input type="radio" id="timer" name="lights_switch" value="timer">
-                <label for="timer">Timer</label><br>
-                <input type="radio" id="off" name="lights_switch" value="off">
-                <label for="off">Off</label>  
+                <button type="submit" name="lights_switch_on" value="lights_switch_on">On</button>
+                <button type="submit" name="lights_switch_off" value="lights_switch_off">Off</button>
+                <button type="submit" name="lights_switch_timer" value="lights_switch_timer">Timer</button>
             </td>
         </tr>
         <tr>
             <td>Fans</td>
             <td>
-                <input type="radio" id="on" name="fans_switch" value="on">
-                <label for="on">On</label><br>
-                <input type="radio" id="timer" name="fans_switch" value="timer">
-                <label for="timer">Timer</label><br>
-                <input type="radio" id="off" name="fans_switch" value="off">
-                <label for="off">Off</label>
+                <button type="submit" name="fans_switch_timer" value="fans_switch_timer">On</button>
+                <button type="submit" name="fans_switch_timer" value="fans_switch_timer">Off</button>
+                <button type="submit" name="fans_switch_timer" value="fans_switch_timer">Timer</button>
             </td>
         </tr>
         <tr>
             <td>Misting</td>
             <td>
-                <input type="radio" id="on" name="misting_switch" value="on">
-                <label for="on">On</label><br>
-                <input type="radio" id="timer" name="misting_switch" value="timer">
-                <label for="timer">Timer</label><br>
-                <input type="radio" id="off" name="misting_switch" value="off">
-                <label for="off">Off</label>
+                <button type="submit" name="misting_switch_timer" value="misting_switch_timer">On</button>
+                <button type="submit" name="misting_switch_timer" value="misting_switch_timer">Off</button>
+                <button type="submit" name="misting_switch_timer" value="misting_switch_timer">Timer</button>
             </td>
         </tr>
         

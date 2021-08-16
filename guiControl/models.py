@@ -25,3 +25,14 @@ class Temp_humi_calls(models.Model):
 
     def __str__(self):
         return (f"temp- {self.temp}, humidety- {self.humidety}")
+
+class Humi_sensor(models.Model):
+    pin_number = models.IntegerField(default=0)
+
+    def __str__(self):
+        return (f"Humi pin- {self.pin_number}")
+
+class Led_screen(models.Model):
+    pin_number = models.IntegerField(default=0)
+    start_time = models.TimeField()
+    end_time = models.TimeField()
