@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import os
 from time import sleep
 import django
@@ -61,19 +63,26 @@ def screen_output(mylcd,curr_temp, curr_humi):
 
 mylcd = I2C_LCD_driver.lcd()
 
+try:
+    while True:
 
-while True:
-    sleep(0.5)
-    now = datetime.now().time().replace(microsecond=0)
+        sleep(0.5)
+        now = datetime.now().time().replace(microsecond=0)
 
-    switches = Terra_switches.objects.get(id=1)  # Only 1 object should exist
-    
-    lights_handler(switches)
-    fans_handler(switches)
-    misting_handler(switches)
+        switches = Terra_switches.objects.get(id=1)  # Only 1 object should exist
+        
+        lights_handler(switches)
+        fans_handler(switches)
+        misting_handler(switches)
 
-    screen_output(mylcd,"30.1", "100%")   # TODO: implement a sensor read for this data, then save tp DB and display
+        screen_output(mylcd,"30.1", "100%")   # TODO: implement a sensor read for this data, then save tp DB and display
 
+
+except:
     GPIO.cleanup()
+
+finally:
+    GPIO.cleanup()
+
 
 
