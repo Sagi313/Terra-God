@@ -1,4 +1,4 @@
-from guiControl.models import Humi_sensor, Led_screen, Light_interval, Terra_switches
+from guiControl.models import Humi_sensor, Led_screen, Light_interval, Temp_humi_calls, Terra_switches
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 import os
@@ -6,6 +6,8 @@ import os
 
 def index(response):    
     switches = Terra_switches.objects.get(id=1)
+    
+    sensor_records = Temp_humi_calls.objects.last() # TODO: change to the last 10 calls
     
     if response.method == 'POST':
         if "lights_switch_timer" in  response.POST:
@@ -22,7 +24,7 @@ def index(response):
 
 
 
-    return render(response, "guiControl/index.html", {})
+    return render(response, "guiControl/index.html", {'temp':sensor_records.temp , 'humi': sensor_records.humidity})
 
 def lights(response):
     interval1 = [{'name':'Jungle Dawn', 'status':'running', 'pin_number':'7', 'start_time':'10:00', 'end_time': '15:45'}]

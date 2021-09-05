@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 
 class Light_interval(models.Model):
@@ -21,10 +22,11 @@ class Terra_switches(models.Model):
 
 class Temp_humi_calls(models.Model):
     temp = models.FloatField()
-    humidety = models.FloatField()
+    humidity = models.FloatField()
+    read_rime = models.TimeField(default=datetime.now())
 
     def __str__(self):
-        return (f"temp- {self.temp}, humidety- {self.humidety}")
+        return (f"temp- {self.temp}, humidity- {self.humidity}")
 
 class Humi_sensor(models.Model):
     pin_number = models.IntegerField(default=0)
