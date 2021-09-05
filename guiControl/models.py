@@ -23,7 +23,7 @@ class Terra_switches(models.Model):
 class Temp_humi_calls(models.Model):
     temp = models.FloatField()
     humidity = models.FloatField()
-    read_rime = models.TimeField(default=datetime.now())
+    read_time = models.TimeField(default=datetime.now())
 
     def __str__(self):
         return (f"temp- {self.temp}, humidity- {self.humidity}")

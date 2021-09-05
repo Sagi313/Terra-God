@@ -5,10 +5,12 @@ from time import sleep
 import django
 from datetime import datetime
 import I2C_LCD_driver   # An external py file in the same path
+import Adafruit_DHT
+
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'TerrariumWeb.settings'
 django.setup()
-from guiControl.models import Light_interval, Terra_switches
+from guiControl.models import Light_interval, Terra_switches, Temp_humi_calls
 
 # Code starts here
 import RPi.GPIO as GPIO
@@ -52,11 +54,20 @@ def misting_handler(switches):
     pass
 
 def read_sensor():
-    pass
+    humidity, temperature = Adafruit_DHT.read_retry(11, 4)
+    sen_read = Temp_humi_calls(temp=temperature, humidity=humidity, read_time=now)
+    sen_read.save()
 
 def screen_output(mylcd,curr_temp, curr_humi):
     # TODO: implement a timer for the screen
-    mylcd.lcd_clear()   # Might be useless. should be removed
+    #mylcd.lcd_clear()   # Might be useless. should be removed
+    
+    try:
+        sensor_records = Temp_humi_calls.objects.last()
+        curr_temp = sensor_records.temp
+        curr_humi = sensor_records.humidity
+    except:
+        pass
     
     mylcd.lcd_display_string(f"Temp- {curr_temp} \n Humidity- {curr_humi}", 1)
     mylcd.lcd_display_string(f"Humidity- {curr_humi}", 2)
@@ -66,7 +77,7 @@ mylcd = I2C_LCD_driver.lcd()
 try:
     while True:
 
-        sleep(0.5)
+        sleep(1)
         now = datetime.now().time().replace(microsecond=0)
 
         switches = Terra_switches.objects.get(id=1)  # Only 1 object should exist
@@ -75,7 +86,7 @@ try:
         fans_handler(switches)
         misting_handler(switches)
 
-        screen_output(mylcd,"30.1", "100%")   # TODO: implement a sensor read for this data, then save tp DB and display
+        screen_output(mylcd,"30.1", "99%")   # TODO: implement a sensor read for this data, then save tp DB and display
 
 
 except:
