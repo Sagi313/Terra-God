@@ -55,7 +55,7 @@ def misting_handler(switches):
 
 def read_sensor():
     humidity_r, temperature_r = Adafruit_DHT.read_retry(11, 4)
-    sen_read = Temp_humi_calls(temp=temperature_r, humidity=humidity_r)
+    sen_read = Temp_humi_calls(temp=float(temperature_r), humidity=float(humidity_r))
     print(sen_read.temp, " , ", sen_read.humidity)
     sen_read.save()
 
