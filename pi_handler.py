@@ -16,6 +16,7 @@ GPIO.setmode(GPIO.BOARD)
 def lights_handler(switches):
     ### Lights ###
     if switches.lights_switch == "timer":
+        print("by timer")
         for interval in Light_interval.objects.all():
             light_pin = interval.pin_number
             GPIO.setup(light_pin, GPIO.OUT)
@@ -29,12 +30,14 @@ def lights_handler(switches):
                 print(f"{interval.start_time} not {now} not {interval.end_time}")
     
     elif switches.lights_switch == "on":    # Always on. Ignores the timer
+        print("by on switch")
         for interval in Light_interval.objects.all():
             light_pin = interval.pin_number
             GPIO.setup(light_pin, GPIO.OUT)
             GPIO.output(light_pin, GPIO.HIGH)
     
     else: # Switch off
+        print("by off switch")
         for interval in Light_interval.objects.all():
             light_pin = interval.pin_number
             GPIO.setup(light_pin, GPIO.OUT)
@@ -57,6 +60,8 @@ def screen_output(mylcd,curr_temp, curr_humi):
     mylcd.lcd_display_string(f"Humidity- {curr_humi}", 2)
 
 mylcd = I2C_LCD_driver.lcd()
+
+
 while True:
     sleep(0.5)
     now = datetime.now().time().replace(microsecond=0)
@@ -68,5 +73,7 @@ while True:
     misting_handler(switches)
 
     screen_output(mylcd,"30.1", "100%")   # TODO: implement a sensor read for this data, then save tp DB and display
+
+    GPIO.cleanup()
 
 
