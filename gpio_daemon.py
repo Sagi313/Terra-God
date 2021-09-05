@@ -28,7 +28,7 @@ def lights_handler(switches):
                 print(f"{interval.start_time} < {now} < {interval.end_time}")
 
             else:
-                GPIO.output(light_pin, GPIO.LOW)
+                GPIO.output(light_pin, GPIO.HIGH)
                 print(f"{interval.start_time} not {now} not {interval.end_time}")
     
     elif switches.lights_switch == "on":    # Always on. Ignores the timer
@@ -43,7 +43,7 @@ def lights_handler(switches):
         for interval in Light_interval.objects.all():
             light_pin = interval.pin_number
             GPIO.setup(light_pin, GPIO.OUT)
-            GPIO.output(light_pin, GPIO.LOW)
+            GPIO.output(light_pin, GPIO.HIGH)
 
 def fans_handler(switches):
     pass
