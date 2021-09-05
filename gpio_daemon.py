@@ -86,6 +86,7 @@ try:
         lights_handler(switches)
         fans_handler(switches)
         misting_handler(switches)
+        read_sensor()
 
         screen_output(mylcd,"30.1", "99%")   # TODO: implement a sensor read for this data, then save tp DB and display
 
