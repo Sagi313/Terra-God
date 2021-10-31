@@ -1,11 +1,29 @@
 from datetime import datetime
 from django.db import models
 
+
+class Device(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=100, unique=True)
+    pin_number = models.IntegerField(default=0, unique=True)
+    type = models.CharField(max_length=100)
+    status = models.CharField(max_length=100, default="Dummy")
+    is_disabled = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name
+
+    def __eq__(self, other):
+        if self.type == other.type:
+            return True
+        else:
+            return False
+
 class Light_interval(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
+    device = models.ForeignKey(Device, on_delete=models.CASCADE)
     status = models.CharField(max_length=100)
-    pin_number = models.IntegerField(default=0)
     start_time = models.TimeField()
     end_time = models.TimeField()
 
@@ -21,8 +39,8 @@ class Terra_switches(models.Model):
         return (f"Lights- {self.lights_switch}, Fans- {self.fans_switch}, Misting- {self.misting_switch}")
 
 class Temp_humi_calls(models.Model):
-    temp = models.FloatField()
-    humidity = models.FloatField()
+    temp = models.FloatField(default=0.0)
+    humidity = models.FloatField(default=0.0)
     read_time = models.TimeField(default=datetime.now())
 
     def __str__(self):
@@ -38,3 +56,8 @@ class Led_screen(models.Model):
     pin_number = models.IntegerField(default=0)
     start_time = models.TimeField()
     end_time = models.TimeField()
+
+
+class Daemon_stats(models.Model):
+    updated_at = models.TimeField()
+

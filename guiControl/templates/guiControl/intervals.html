@@ -1,9 +1,9 @@
 {% extends 'guiControl/base.html' %}
 
-{% block title %}Terra- Lights{% endblock %}
-{% block pageTitle %}Lights{% endblock %}
+{% block title %}Terra- {{ interval_type }} {% endblock %}
+{% block pageTitle %} {{ interval_type }} {% endblock %}
 
-{% block content %}
+{% block content %} 
 
 {% if messages %}
     <ul class="messages">
@@ -49,12 +49,11 @@
     <a>Device</a>
     <select name="device">
         {% for device in devices %}
-            {% if device.type == 'Light' %}
+            {% if device.type == interval_type %}
                 <option value="{{ device }}">{{ device.name }}</option>
             {% endif %}
         {% endfor %}
     </select>
-
     <a>Start time</a>
     <!-- To allow seconds in the time fiels, add the prop: step='1' -->
     <input type="time" name="start_time" required>   
@@ -65,7 +64,4 @@
     <button type="submit"  name="submit" value='submit_data'>Submit</button>
     <button type="reset"  name="cancel" value='cancel_form'>Cancel</button>
 </form>
-
-
 {% endblock %}
-
