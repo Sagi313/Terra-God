@@ -47,7 +47,6 @@ def lights(response):
 
                     messages.success(response, f'Interval {inter_name} was deleted')
 
-
         return redirect('/lights')
 
     # Gets only the intervals that has a device in the correct type
@@ -67,15 +66,120 @@ def lights(response):
 
 def misting(response):
 
-    return render(response, "guiControl/intervals.html", {'interval_type':"Misting"})
+    if response.method == 'POST':
+        if response.POST.get("submit"):
+            associated_device = Device.objects.get(name=response.POST.get('device'))
+            
+            new_inter = Light_interval(name=response.POST.get('interval_name'), status='running', device=associated_device, start_time=response.POST.get('start_time'), end_time=response.POST.get('end_time'))
+            new_inter.save()
+
+            messages.success(response, f'Interval {new_inter.name} added succuessfully')
+
+
+        if response.POST.get("delete_intervals"):
+            for key in response.POST:
+                if "delete-inter_" in key:
+                    to_delete_id = key.split("_")[1]
+                    to_delete_inter = Light_interval.objects.get(id=int(to_delete_id))
+                    inter_name = to_delete_inter.name
+                    to_delete_inter.delete()
+
+                    messages.success(response, f'Interval {inter_name} was deleted')
+
+        return redirect('/misting')
+
+    # Gets only the intervals that has a device in the correct type
+    def get_all_relevant_intervals():
+        relevant_intervals = []
+        all_intervals = Light_interval.objects.all()
+
+        for inter in all_intervals:
+            related_device = Device.objects.get(id=inter.device.id)
+            if related_device.type == "Misting":
+                relevant_intervals.append(inter)
+        
+        return relevant_intervals
+
+    return render(response, "guiControl/intervals.html", {'intervals':get_all_relevant_intervals(), 'devices':Device.objects.all(), 'interval_type':"Misting"})
+
 
 
 
 def fans(response):
-    return render(response, "guiControl/fans.html", {})
+    if response.method == 'POST':
+        if response.POST.get("submit"):
+            associated_device = Device.objects.get(name=response.POST.get('device'))
+            
+            new_inter = Light_interval(name=response.POST.get('interval_name'), status='running', device=associated_device, start_time=response.POST.get('start_time'), end_time=response.POST.get('end_time'))
+            new_inter.save()
+
+            messages.success(response, f'Interval {new_inter.name} added succuessfully')
+
+
+        if response.POST.get("delete_intervals"):
+            for key in response.POST:
+                if "delete-inter_" in key:
+                    to_delete_id = key.split("_")[1]
+                    to_delete_inter = Light_interval.objects.get(id=int(to_delete_id))
+                    inter_name = to_delete_inter.name
+                    to_delete_inter.delete()
+
+                    messages.success(response, f'Interval {inter_name} was deleted')
+
+        return redirect('/fans')
+
+    # Gets only the intervals that has a device in the correct type
+    def get_all_relevant_intervals():
+        relevant_intervals = []
+        all_intervals = Light_interval.objects.all()
+
+        for inter in all_intervals:
+            related_device = Device.objects.get(id=inter.device.id)
+            if related_device.type == "Fans":
+                relevant_intervals.append(inter)
+        
+        return relevant_intervals
+
+    return render(response, "guiControl/intervals.html", {'intervals':get_all_relevant_intervals(), 'devices':Device.objects.all(), 'interval_type':"Fans"})
+
 
 def other_devices(response):
-    return render(response, "guiControl/other_devices.html", {})
+    if response.method == 'POST':
+        if response.POST.get("submit"):
+            associated_device = Device.objects.get(name=response.POST.get('device'))
+            
+            new_inter = Light_interval(name=response.POST.get('interval_name'), status='running', device=associated_device, start_time=response.POST.get('start_time'), end_time=response.POST.get('end_time'))
+            new_inter.save()
+
+            messages.success(response, f'Interval {new_inter.name} added succuessfully')
+
+
+        if response.POST.get("delete_intervals"):
+            for key in response.POST:
+                if "delete-inter_" in key:
+                    to_delete_id = key.split("_")[1]
+                    to_delete_inter = Light_interval.objects.get(id=int(to_delete_id))
+                    inter_name = to_delete_inter.name
+                    to_delete_inter.delete()
+
+                    messages.success(response, f'Interval {inter_name} was deleted')
+
+        return redirect('/other_devices')
+
+    # Gets only the intervals that has a device in the correct type
+    def get_all_relevant_intervals():
+        relevant_intervals = []
+        all_intervals = Light_interval.objects.all()
+
+        for inter in all_intervals:
+            related_device = Device.objects.get(id=inter.device.id)
+            if related_device.type == "Other":
+                relevant_intervals.append(inter)
+        
+        return relevant_intervals
+
+    return render(response, "guiControl/intervals.html", {'intervals':get_all_relevant_intervals(), 'devices':Device.objects.all(), 'interval_type':"Other"})
+
 
 def daemon_logs(response):
     return render(response, "guiControl/daemon_logs.html", {})

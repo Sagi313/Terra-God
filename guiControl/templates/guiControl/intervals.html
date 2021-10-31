@@ -47,7 +47,7 @@
     <input type="text" name="interval_name" required>
     
     <a>Device</a>
-    <select name="device">
+    <select name="device" required>
         {% for device in devices %}
             {% if device.type == interval_type %}
                 <option value="{{ device }}">{{ device.name }}</option>
@@ -56,10 +56,10 @@
     </select>
     <a>Start time</a>
     <!-- To allow seconds in the time fiels, add the prop: step='1' -->
-    <input type="time" name="start_time" required>   
+    <input type="time" name="start_time" step="1" required>   
     
     <a>End time</a>
-    <input type="time" name="end_time" required>
+    <input type="time" name="end_time" step="1" required>
     
     <button type="submit"  name="submit" value='submit_data'>Submit</button>
     <button type="reset"  name="cancel" value='cancel_form'>Cancel</button>
