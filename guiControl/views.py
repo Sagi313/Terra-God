@@ -4,19 +4,31 @@ from django.contrib import messages
 
 
 def index(response):    
-    switches = Terra_switches.objects.get(id=1)
+    switches = Terra_switches.objects.first() # TODO: Change this. When first installing there is nothing in the DB, not even 1 row.
     
     sensor_records = Temp_humi_calls.objects.last() # TODO: change to the last 10 calls
     
     if response.method == 'POST':
         if "lights_switch_timer" in  response.POST:
             switches.lights_switch = "timer"
-
-        if "lights_switch_on" in  response.POST:
+        elif "lights_switch_on" in  response.POST:
             switches.lights_switch = "on"
-
-        if "lights_switch_off" in  response.POST:
+        elif "lights_switch_off" in  response.POST:
             switches.lights_switch = "off"
+
+        if "fans_switch_timer" in  response.POST:
+            switches.fans_switch = "timer"
+        elif "fans_switch_on" in  response.POST:
+            switches.fans_switch = "on"
+        elif "fans_switch_off" in  response.POST:
+            switches.fans_switch = "off"
+        
+        if "misting_switch_timer" in  response.POST:
+            switches.misting_switch = "timer"
+        elif "misting_switch_on" in  response.POST:
+            switches.misting_switch = "on"
+        elif "misting_switch_off" in  response.POST:
+            switches.misting_switch = "off"
         
         switches.save()
         return redirect('/')
@@ -186,8 +198,8 @@ def daemon_logs(response):
 
 def settings(response):
 
-    sensor = Humi_sensor.objects.get(id=1)
-    screen = Led_screen.objects.get(id=1)
+    sensor = Humi_sensor.objects.first()
+    screen = Led_screen.objects.first()
 
     if response.method == 'POST':
         if response.POST.get("apply_screen"):
