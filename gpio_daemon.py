@@ -6,7 +6,8 @@ import I2C_LCD_driver   # An external py file in the same path
 import RPi.GPIO as GPIO
 from datetime import datetime
 import sys, time, os, logging
-from basic_daemon import Daemon
+from base_daemon import Daemon
+
 
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'TerrariumWeb.settings'
