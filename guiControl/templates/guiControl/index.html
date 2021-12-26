@@ -4,12 +4,8 @@
 {% block pageTitle %}Home Page{% endblock %}
 
 {% block content %}
-<p>Temp: {{temp}}</p>
-<p>Humidity: {{humi}}</p>
-
-<form method="post" ,action="#">
-
-{% csrf_token %}
+    <p>Temp: {{ temp }}</p>
+    <p>Humidity: {{ humi }}</p>
 
     <table>
         <tr>
@@ -19,30 +15,77 @@
         <tr>
             <td>Lights</td>
             <td>
-                <button type="submit" name="lights_switch_on" value="lights_switch_on">On</button>
-                <button type="submit" name="lights_switch_off" value="lights_switch_off">Off</button>
-                <button type="submit" name="lights_switch_timer" value="lights_switch_timer">Timer</button>
+                <form method="post" action="#">
+                    {% csrf_token %}
+                    <div class="btn-group" role="group" aria-label="Lights radio toggle button group">
+                        <input type="radio" class="btn-check" name="lights_switch" value="on" id="btnradio1"
+                               autocomplete="off" onchange='this.form.submit();' {% if switches.lights_switch == 'on' %}
+                               checked {% endif %}>
+                        <label class="btn btn-outline-primary" for="btnradio1">On</label>
+
+                        <input type="radio" class="btn-check" name="lights_switch" value="timer" id="btnradio2"
+                               autocomplete="off" onchange='this.form.submit();'
+                                {% if switches.lights_switch == 'timer' %} checked {% endif %}>
+                        <label class="btn btn-outline-primary" for="btnradio2">Timer</label>
+
+                        <input type="radio" class="btn-check" name="lights_switch" value="off" id="btnradio3"
+                               autocomplete="off" onchange='this.form.submit();'
+                                {% if switches.lights_switch == 'off' %} checked {% endif %}>
+                        <label class="btn btn-outline-primary" for="btnradio3">Off</label>
+                    </div>
+                </form>
             </td>
         </tr>
+
         <tr>
             <td>Fans</td>
             <td>
-                <button type="submit" name="fans_switch_timer" value="fans_switch_timer">On</button>
-                <button type="submit" name="fans_switch_timer" value="fans_switch_timer">Off</button>
-                <button type="submit" name="fans_switch_timer" value="fans_switch_timer">Timer</button>
+                <form method="post" action="#">
+                    {% csrf_token %}
+                    <div class="btn-group" role="group" aria-label="Fans radio toggle button group1">
+                        <input type="radio" class="btn-check" name="fans_switch" value="on" id="btnradio4"
+                               autocomplete="off" onchange='this.form.submit();' {% if switches.fans_switch == 'on' %}
+                               checked {% endif %}>
+                        <label class="btn btn-outline-primary" for="btnradio4">On</label>
+
+                        <input type="radio" class="btn-check" name="fans_switch" value="timer" id="btnradio5"
+                               autocomplete="off" onchange='this.form.submit();'
+                                {% if switches.fans_switch == 'timer' %} checked {% endif %}>
+                        <label class="btn btn-outline-primary" for="btnradio5">Timer</label>
+
+                        <input type="radio" class="btn-check" name="fans_switch" value="off" id="btnradio6"
+                               autocomplete="off" onchange='this.form.submit();' {% if switches.fans_switch == 'off' %}
+                               checked {% endif %}>
+                        <label class="btn btn-outline-primary" for="btnradio6">Off</label>
+                    </div>
+                </form>
             </td>
         </tr>
         <tr>
             <td>Misting</td>
             <td>
-                <button type="submit" name="misting_switch_timer" value="misting_switch_timer">On</button>
-                <button type="submit" name="misting_switch_timer" value="misting_switch_timer">Off</button>
-                <button type="submit" name="misting_switch_timer" value="misting_switch_timer">Timer</button>
+                <form method="post" action="#">
+                    {% csrf_token %}
+                    <div class="btn-group" role="group" aria-label="Misting radio toggle button group1">
+                        <input type="radio" class="btn-check" name="misting_switch" value="on" id="btnradio7"
+                               autocomplete="off" onchange='this.form.submit();' {% if switches.misting_switch == 'on' %}
+                               checked {% endif %}>
+                        <label class="btn btn-outline-primary" for="btnradio7">On</label>
+
+                        <input type="radio" class="btn-check" name="misting_switch" value="timer" id="btnradio8"
+                               autocomplete="off" onchange='this.form.submit();'
+                                {% if switches.misting_switch == 'timer' %} checked {% endif %}>
+                        <label class="btn btn-outline-primary" for="btnradio8">Timer</label>
+
+                        <input type="radio" class="btn-check" name="misting_switch" value="off" id="btnradio9"
+                               autocomplete="off" onchange='this.form.submit();' {% if switches.misting_switch == 'off' %}
+                               checked {% endif %}>
+                        <label class="btn btn-outline-primary" for="btnradio9">Off</label>
+                    </div>
+                </form>
             </td>
         </tr>
-        
-    </table>
-</form> 
-        
-{% endblock %}
 
+    </table>
+
+{% endblock %}

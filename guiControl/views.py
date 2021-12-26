@@ -9,33 +9,21 @@ def index(response):
     sensor_records = Temp_humi_calls.objects.last() # TODO: change to the last 10 calls
     
     if response.method == 'POST':
-        if "lights_switch_timer" in  response.POST:
-            switches.lights_switch = "timer"
-        elif "lights_switch_on" in  response.POST:
-            switches.lights_switch = "on"
-        elif "lights_switch_off" in  response.POST:
-            switches.lights_switch = "off"
+        print(response.POST, flush=True)
 
-        if "fans_switch_timer" in  response.POST:
-            switches.fans_switch = "timer"
-        elif "fans_switch_on" in  response.POST:
-            switches.fans_switch = "on"
-        elif "fans_switch_off" in  response.POST:
-            switches.fans_switch = "off"
-        
-        if "misting_switch_timer" in  response.POST:
-            switches.misting_switch = "timer"
-        elif "misting_switch_on" in  response.POST:
-            switches.misting_switch = "on"
-        elif "misting_switch_off" in  response.POST:
-            switches.misting_switch = "off"
+        if response.POST.get('lights_switch'):
+            switches.lights_switch = response.POST.get('lights_switch')
+        elif response.POST.get('fans_switch'):
+            switches.fans_switch = response.POST.get('fans_switch')
+        elif response.POST.get('misting_switch'):
+            switches.misting_switch = response.POST.get('misting_switch')
         
         switches.save()
         return redirect('/')
 
+    return render(response, "guiControl/index.html", {'temp': sensor_records.temp, 'humi': sensor_records.humidity,
+                                                      'switches': switches})
 
-
-    return render(response, "guiControl/index.html", {'temp':sensor_records.temp , 'humi': sensor_records.humidity})
 
 def lights(response):
     

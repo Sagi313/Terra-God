@@ -5,55 +5,81 @@
 
 {% block content %}
 
-{% if messages %}
-    <ul class="messages">
+    {% if messages %}
         {% for message in messages %}
-            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% if message.tags == 'success' %}
+                <div class="alert alert-success" role="alert">
+                    {{ message }}
+                </div>
+            {% else %}
+                <div class="alert alert-danger" role="alert">
+                    {{ message }}
+                </div>
+            {% endif %}
         {% endfor %}
-    </ul>
-{% endif %}
+    {% endif %}
 
-<form method="post" ,action="#">
-    {% csrf_token %}
-    <table style="width:100%">
-        <tr>
-            <th>Name</th>
-            <th>Pi Pin No.</th>
-            <th>Type</th>
-            <th>Delete</th>
-        </tr>           
+    <form method="post" ,action="#">
+        {% csrf_token %}
+        <table style="width:100%">
+            <tr>
+                <th>Name</th>
+                <th>Pi Pin No.</th>
+                <th>Type</th>
+                <th>Delete</th>
+            </tr>
 
-        {% for device in devices %}
-        <tr>
-            <td>{{device.name}}</td>
-            <td>{{device.pin_number}}</td>
-            <td>{{device.type}}</td>
-            <td><input type="checkbox" name="delete-device_{{device.id}}"></button></td>
-        </tr>       
-        {%endfor%}
-    </table>
-    <button type="submit"  name="delete_devices" value='delete_devices'>Delete Selected</button>
-</form>
+            {% for device in devices %}
+                <tr>
+                    <td>{{ device.name }}</td>
+                    <td>{{ device.pin_number }}</td>
+                    <td>{{ device.type }}</td>
+                    <td><input type="checkbox" class="form-check-input position-static"
+                               name="delete-device_{{ device.id }}"></td>
+                </tr>
+            {% endfor %}
+        </table>
+        <button type="submit" class="btn btn-danger" name="delete_devices" value='delete_devices'>Delete Selected
+        </button>
+    </form>
 
-<br>
-<h3>Add new device</h3>
-<form method="post" ,action="#">
-    {% csrf_token %}
-    <a>Device name</a>
-    <input type="text" name="device_name" required>
-    <a>Pi pin number</a>
-    <input type="number" name="pin_number" min='1' max='40' required>
-    <a>Type</a>
-    <select name="type" required>
-        <option value="Light">Light</option>
-        <option value="Misting">Misting</option>
-        <option value="Fans">Fan</option>
-        <option value="Other">Other</option>
-    </select>
-    
-    <button type="submit"  name="submit" value='submit_data'>Submit</button>
-    <button type="reset"  name="cancel" value='cancel_form'>Cancel</button>
-</form>
+    <br>
+    <h3>Add new device</h3>
+    <form method="post" ,action="#">
+        {% csrf_token %}
+        <div class="row">
+            <div class="form-group">
+                <label for="deviceName">Device name</label>
+                <input type="text" class="form-control" name="device_name" placeholder="enter the device name" required>
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="col">
+
+                <div class="form-group">
+                    <label for="pinNumber">Pi pin number</label>
+                    <input type="number" class="form-control" name="device_name" placeholder="0" min='1' max='40'
+                           required>
+                </div>
+            </div>
+            <div class="col">
+
+                <div class="form-group">
+                    <label for="inputState">Type</label>
+                    <select class="form-control" name="type" required>
+                        <option value="Light">Light</option>
+                        <option value="Misting">Misting</option>
+                        <option value="Fans">Fan</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" name="submit" value='submit_data'>Submit</button>
+        <button type="reset" class="btn btn-danger" name="cancel" value='cancel_form'>Cancel</button>
+    </form>
 
 
 {% endblock %}
