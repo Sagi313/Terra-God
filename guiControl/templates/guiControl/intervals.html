@@ -3,65 +3,89 @@
 {% block title %}Terra- {{ interval_type }} {% endblock %}
 {% block pageTitle %} {{ interval_type }} {% endblock %}
 
-{% block content %} 
+{% block content %}
 
-{% if messages %}
-    <ul class="messages">
+    {% if messages %}
         {% for message in messages %}
-            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-        {% endfor %}
-    </ul>
-{% endif %}
-
-<form method="post" ,action="#">
-    {% csrf_token %}
-    <table style="width:100%">
-        <tr>
-            <th>Name</th>
-            <th>Status</th>
-            <th>Device</th>
-            <th>Start Time</th>
-            <th>End Time</th>
-            <th>Delete</th>
-        </tr>           
-
-        {% for inter in intervals %}
-        <tr>
-            <td>{{inter.name}}</td>
-            <td>{{inter.status}}</td>
-            <td>{{inter.device}}</td>
-            <td>{{inter.start_time}}</td>
-            <td>{{inter.end_time}}</td>
-            <td><input type="checkbox" name="delete-inter_{{inter.id}}"></button></td>
-        </tr>       
-        {%endfor%}
-    </table>
-    <button type="submit"  name="delete_intervals" value='delete_intervals'>Delete Selected</button>
-</form>
-
-<br>
-<h3>Create new interval</h3>
-<form method="post" ,action="#">
-    {% csrf_token %}
-    <a>Interval name</a>
-    <input type="text" name="interval_name" required>
-    
-    <a>Device</a>
-    <select name="device" required>
-        {% for device in devices %}
-            {% if device.type == interval_type %}
-                <option value="{{ device }}">{{ device.name }}</option>
+            {% if message.tags == 'success' %}
+                <div class="alert alert-success" role="alert">
+                    {{ message }}
+                </div>
+            {% else %}
+                <div class="alert alert-danger" role="alert">
+                    {{ message }}
+                </div>
             {% endif %}
         {% endfor %}
-    </select>
-    <a>Start time</a>
-    <!-- To allow seconds in the time fiels, add the prop: step='1' -->
-    <input type="time" name="start_time" step="1" required>   
-    
-    <a>End time</a>
-    <input type="time" name="end_time" step="1" required>
-    
-    <button type="submit"  name="submit" value='submit_data'>Submit</button>
-    <button type="reset"  name="cancel" value='cancel_form'>Cancel</button>
-</form>
+    {% endif %}
+
+    <form method="post" ,action="#">
+        {% csrf_token %}
+        <table style="width:100%">
+            <tr>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Device</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Delete</th>
+            </tr>
+
+            {% for inter in intervals %}
+                <tr>
+                    <td>{{ inter.name }}</td>
+                    <td>{{ inter.status }}</td>
+                    <td>{{ inter.device }}</td>
+                    <td>{{ inter.start_time }}</td>
+                    <td>{{ inter.end_time }}</td>
+                    <td><input type="checkbox" name="delete-inter_{{ inter.id }}"
+                               class="form-check-input position-static"></td>
+                </tr>
+            {% endfor %}
+        </table>
+        <button type="submit" class="btn btn-danger" name="delete_intervals" value='delete_intervals'>Delete Selected</button>
+    </form>
+
+    <br>
+    <h3>Create new interval</h3>
+    <form method="post" ,action="#">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label for="inputAddress">Interval name</label>
+                    <input type="text" class="form-control" name="interval_name" placeholder="Name" required>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label for="inputState">Device</label>
+                    <select class="form-control" name="device" required>
+                        {% for device in devices %}
+                            {% if device.type == interval_type %}
+                                <option value="{{ device }}">{{ device.name }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label for="inputMDEx1">Start Time</label>
+                    <input type="time" class="form-control" name="start_time" step="1" required>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label for="inputMDEx1">End Time</label>
+                    <input type="time" class="form-control" name="end_time" step="1" required>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" name="submit" value='submit_data'>Submit</button>
+        <button type="reset" class="btn btn-danger" name="cancel" value='cancel_form'>Cancel</button>
+    </form>
 {% endblock %}
