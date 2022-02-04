@@ -12,7 +12,7 @@ from base_daemon import Daemon
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'TerrariumWeb.settings'
 django.setup()
-from guiControl.models import Terra_switches, Temp_humi_calls, Light_interval
+from guiControl.models import Device, Terra_switches, Temp_humi_calls, Light_interval
 
  
 class MyDaemon(Daemon):
@@ -33,56 +33,145 @@ class MyDaemon(Daemon):
             self.read_sensor()
             self.screen_output(self.mylcd,"30.1", "99%")   # TODO: implement a sensor read for this data, then save tp DB and display
 
+    ### THIS IS THE NEW APPROCH TO IMPLEMENT. THIS SHOULD BE REPLACED WITH THE CURRENT FUNCTION ###
 
-    def interval_handler(self):
-        switches = Terra_switches.objects.first()
-        logging.info('Started checking intervals')
-        logging.info(f'All the switches statuses: {switches}')
+    def merge_time_intervals(self, pin_to_interval_map):  # TODO: Fix that to be by each pin, not a type.
+        merged = []
+        for pin_number, interval_list in pin_to_interval_map.items():
+            merged = [interval_list.pop(0)]
+            for interval in interval_list:
+                if merged[-1].end_time < interval.start_time:
+                    merged.append(interval)
+                elif merged[-1].end_time > interval.start_time and interval.end_time > merged[-1].end_time:
+                    merged[-1].end_time = interval.end_time
 
-        for interval in Light_interval.objects.all():
+        return merged
 
-            device_group = interval.device.type
-            device_group_status = ""
-            if device_group == 'Light':
-                device_group_status = switches.lights_switch 
-            elif device_group == 'Fan':
-                device_group_status = switches.fans_switch 
-            elif device_group == 'Misting':
-                device_group_status = switches.misting_switch 
-            
-            logging.info(f'device {interval} status: {device_group_status}')
-
-            if device_group_status == "timer":
-                logging.info(f'{interval} is by timer')
+    def change_switches(self, switch_state, merged_intervals):
+        if switch_state == 'timer':
+            for interval in merged_intervals:
                 now = datetime.now().time()
 
-                light_pin = interval.device.pin_number
-                GPIO.setup(light_pin, GPIO.OUT)
+                pin_number = interval.device.pin_number
+                GPIO.setup(pin_number, GPIO.OUT)
 
                 if interval.start_time < now and now < interval.end_time:
-                    GPIO.output(light_pin, GPIO.LOW)
-                    print(f"{interval.start_time} < {now} < {interval.end_time}")
+                    GPIO.output(pin_number, GPIO.LOW)
 
                 else:
-                    GPIO.output(light_pin, GPIO.HIGH)
-                    print(f"{interval.start_time} not {now} not {interval.end_time}")
-            
+                    GPIO.output(pin_number, GPIO.HIGH)
 
-            elif device_group_status == "off":    # Always off. Ignores the timer
-                logging.info(f'{interval} is by off switch')
-                light_pin = interval.device.pin_number
-
-                GPIO.setup(light_pin, GPIO.OUT)
-                GPIO.output(light_pin, GPIO.HIGH)
-            
-            
-            else: # Switch on
-                logging.info(f'{interval} is by on switch')
+        elif switch_state == 'on':
+            for interval in merged_intervals:
                 light_pin = interval.device.pin_number
                 GPIO.setup(light_pin, GPIO.OUT)
                 GPIO.output(light_pin, GPIO.LOW)
 
-        logging.info('Checked all the intervals')
+        else:   # Off switch
+            for interval in merged_intervals:
+                light_pin = interval.device.pin_number
+                GPIO.setup(light_pin, GPIO.OUT)
+                GPIO.output(light_pin, GPIO.HIGH)
+
+    def interval_handler(self):
+        switches = Terra_switches.objects.first()
+        logging.info(f'All the switches statuses: {switches}')
+
+        all_intervals =  Light_interval.objects.all()
+
+        lights_intervals, fans_intervals, misting_intervals = [], [], []
+        for interval in all_intervals:
+            if interval.device.type == 'Light':
+                lights_intervals.append(interval)
+            elif interval.device.type == 'Fans':
+                fans_intervals.append(interval)
+            elif interval.device.type == 'Misting':
+                misting_intervals.append(interval)
+
+        lights_pin_num_to_interval_map = {}
+        for interval in lights_intervals:
+            if str(interval.device.pin_number) in lights_pin_num_to_interval_map:
+                lights_pin_num_to_interval_map[str(interval.device.pin_number)] += [interval]
+            else:
+                lights_pin_num_to_interval_map[str(interval.device.pin_number)] = [interval]
+
+        fans_pin_num_to_interval_map = {}
+        for interval in fans_intervals:
+            if str(interval.device.pin_number) in fans_pin_num_to_interval_map:
+                fans_pin_num_to_interval_map[str(interval.device.pin_number)] += [interval]
+            else:
+                fans_pin_num_to_interval_map[str(interval.device.pin_number)] = [interval]
+
+        misting_pin_num_to_interval_map = {}
+        for interval in misting_intervals:
+            if str(interval.device.pin_number) in misting_pin_num_to_interval_map:
+                misting_pin_num_to_interval_map[str(interval.device.pin_number)] += [interval]
+            else:
+                misting_pin_num_to_interval_map[str(interval.device.pin_number)] = [interval]
+
+        print(lights_pin_num_to_interval_map)
+        lights_merged_intervals = self.merge_time_intervals(lights_pin_num_to_interval_map)
+        fans_merged_intervals = self.merge_time_intervals(fans_pin_num_to_interval_map)
+        misting_merged_intervals = self.merge_time_intervals(misting_pin_num_to_interval_map)
+        print(lights_merged_intervals)
+
+        self.change_switches(switches.lights_switch, lights_merged_intervals)
+        self.change_switches(switches.fans_switch, fans_merged_intervals)
+        self.change_switches(switches.misting_switch, misting_merged_intervals)
+        
+
+
+
+    # def interval_handler(self):
+    #     logging.info('Started checking intervals')
+    #     switches = Terra_switches.objects.first()
+    #     logging.info(f'All the switches statuses: {switches}')
+
+    #     for interval in Light_interval.objects.all():
+    #         related_device = Device.objects.get(id=interval.device)
+
+    #         device_group = related_device.type
+    #         device_group_status = ''
+    #         if device_group == 'Light':
+    #             device_group_status = switches.lights_switch 
+    #         elif device_group == 'Fans':
+    #             device_group_status = switches.fans_switch 
+    #         elif device_group == 'Misting':
+    #             device_group_status = switches.misting_switch 
+            
+    #         logging.info(f'device {interval} status: {device_group_status}')
+
+    #         if device_group_status == "timer":
+    #             logging.info(f'{interval} is by timer')
+    #             now = datetime.now().time()
+
+    #             light_pin = interval.device.pin_number
+    #             GPIO.setup(light_pin, GPIO.OUT)
+
+    #             if interval.start_time < now and now < interval.end_time:
+    #                 GPIO.output(light_pin, GPIO.LOW)
+    #                 print(f"{interval.start_time} < {now} < {interval.end_time}")
+
+    #             else:
+    #                 GPIO.output(light_pin, GPIO.HIGH)
+    #                 print(f"{interval.start_time} not {now} not {interval.end_time}")
+            
+
+    #         elif device_group_status == "off" and related_device.status == 'Running':    # Always off. Ignores the timer
+    #             logging.info(f'{interval} is by off switch')
+    #             light_pin = interval.device.pin_number
+
+    #             GPIO.setup(light_pin, GPIO.OUT)
+    #             GPIO.output(light_pin, GPIO.HIGH)
+            
+            
+    #         elif device_group_status == "on" and related_device.status == 'Stopped':    # Always on. Ignores the timer
+    #             logging.info(f'{interval} is by on switch')
+    #             light_pin = interval.device.pin_number
+    #             GPIO.setup(light_pin, GPIO.OUT)
+    #             GPIO.output(light_pin, GPIO.LOW)
+
+    #     logging.info('Checked all the intervals')
 
     def read_sensor(self):
         humidity_r, temperature_r = Adafruit_DHT.read_retry(11, 4)
