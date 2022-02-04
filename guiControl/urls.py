@@ -11,6 +11,7 @@ urlpatterns = [
     path('devices/', views.devices, name='devices'),
     path('daemon_logs/', views.daemon_logs, name='daemon logs'),
     path('other_devices/', views.other_devices, name='other devices'),
+    path('sensors/', views.sensors, name='sensors'),
     path('settings/', views.settings, name='settings'),
 ]
 

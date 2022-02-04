@@ -1,39 +1,57 @@
 {% extends 'guiControl/base.html' %}
 
-{% block title %}Terra- Settings{% endblock %}
+{% block title %}Terra God- Settings{% endblock %}
 {% block pageTitle %}Settings{% endblock %}
+
 {% block content %}
-    <table style="width:100%">
-        <tr>
-            <th>Name</th>
-            <th>Pi Pin No.</th>
-            <th>Start Time</th>
-            <th>End Time</th>
-            <th>Apply Changes</th>
-        </tr>           
 
-        <form method="post" ,action="#">
-        {% csrf_token %}
-        <tr>
-            <td>Screen</td>
-            <td><input placeholder="{{screen.pin_number}}" class="form-control" name="screen_pin_num" required></td>
-            <td><input type="time" class="form-control" placeholder="{{screen.start_time}}" name="screen_start" required></td>
-            <td><input type="time" class="form-control" placeholder="{{screen.end_time}}" name="screen_end" required></td>
-            <td><button type="submit" class="btn btn-primary" name="apply_screen" value='apply_screen'>Apply</button></td>
-        </tr>       
-        </form>
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == 'success' %}
+                <div class="alert alert-success" role="alert">
+                    {{ message }}
+                </div>
+            {% else %}
+                <div class="alert alert-danger" role="alert">
+                    {{ message }}
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
 
-        <form method="post" ,action="#">
+    <form method="post" ,action="#">
         {% csrf_token %}
-        <tr>
-            <td>Sensor</td>
-            <td><input type="number" class="form-control" placeholder="{{sensor.pin_number}}" name="sensor_pin_num" required></td>
-            <td>None</td>
-            <td>None</td>
-            <td><button type="submit" class="btn btn-primary" name="apply_sensor" value='apply_sensor'>Apply</button></td>
-        </tr>       
-        </form>
-    </table>
+        <table style="width:100%">
+            <tr>
+                <th>Name</th>
+                <th>Delete</th>
+            </tr>
+
+            {% for group in interval_groups %}
+                <tr>
+                    <td>{{ group.name }}</td>
+                    <td><input type="checkbox" class="form-check-input position-static"
+                               name="delete-group_{{ group.id }}"></td>
+                </tr>
+            {% endfor %}
+        </table>
+        <button type="submit" class="btn btn-danger" name="delete_group" value='delete_group'>Delete Selected
+        </button>
+    </form>
+
+    <br>
+    <h3>Add new interval group</h3>
+    <form method="post" ,action="#">
+        {% csrf_token %}
+        <div class="row">
+            <div class="form-group">
+                <label for="deviceName">Group name</label>
+                <input type="text" class="form-control" name="device_name" placeholder="enter the device name" required>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary" name="submit" value='submit_data'>Submit</button>
+        <button type="reset" class="btn btn-danger" name="cancel" value='cancel_form'>Cancel</button>
+    </form>
 
 
 {% endblock %}

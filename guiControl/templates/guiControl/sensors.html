@@ -1,0 +1,40 @@
+{% extends 'guiControl/base.html' %}
+
+{% block title %}Terra- Sensors{% endblock %}
+{% block pageTitle %}Sensors{% endblock %}
+{% block content %}
+    <table style="width:100%">
+        <tr>
+            <th>Name</th>
+            <th>Pi Pin No.</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Apply Changes</th>
+        </tr>           
+
+        <form method="post" ,action="#">
+        {% csrf_token %}
+        <tr>
+            <td>Screen</td>
+            <td><input placeholder="{{screen.pin_number}}" class="form-control" name="screen_pin_num" required></td>
+            <td><input type="time" class="form-control" placeholder="{{screen.start_time}}" name="screen_start" required></td>
+            <td><input type="time" class="form-control" placeholder="{{screen.end_time}}" name="screen_end" required></td>
+            <td><button type="submit" class="btn btn-primary" name="apply_screen" value='apply_screen'>Apply</button></td>
+        </tr>       
+        </form>
+
+        <form method="post" ,action="#">
+        {% csrf_token %}
+        <tr>
+            <td>Sensor</td>
+            <td><input type="number" class="form-control" placeholder="{{sensor.pin_number}}" name="sensor_pin_num" required></td>
+            <td>None</td>
+            <td>None</td>
+            <td><button type="submit" class="btn btn-primary" name="apply_sensor" value='apply_sensor'>Apply</button></td>
+        </tr>       
+        </form>
+    </table>
+
+
+{% endblock %}
+
