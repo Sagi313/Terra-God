@@ -1,38 +1,35 @@
 #!/usr/bin/env python
- 
+
 import django
 import Adafruit_DHT
-import I2C_LCD_driver   # An external py file in the same path
+import I2C_LCD_driver  # An external py file in the same path
 import RPi.GPIO as GPIO
 from datetime import datetime
 import sys, time, os, logging
 from base_daemon import Daemon
 
-
-
 os.environ['DJANGO_SETTINGS_MODULE'] = 'TerrariumWeb.settings'
 django.setup()
 from guiControl.models import Terra_switches, Temp_humi_calls, Light_interval
 
- 
+
 class MyDaemon(Daemon):
-    def __init__(self,pidfile):
+    def __init__(self, pidfile):
         logging.basicConfig(filename='/var/log/gpio-daemon.log', filemode='w', level=logging.DEBUG)
         super().__init__(pidfile)
         GPIO.setmode(GPIO.BOARD)
         self.mylcd = I2C_LCD_driver.lcd()
 
-
     def run(self):
         while True:
             time.sleep(1)
-            
+
             logging.debug(f'Runnning {datetime.now().time()}')
 
             self.interval_handler()
             self.read_sensor()
-            self.screen_output(self.mylcd,"30.1", "99%")   # TODO: implement a sensor read for this data, then save tp DB and display
-
+            # TODO: implement a sensor read for this data, then save tp DB and display
+            self.screen_output(self.mylcd, "30.1", "99%")
 
     def interval_handler(self):
         switches = Terra_switches.objects.first()
@@ -44,12 +41,12 @@ class MyDaemon(Daemon):
             device_group = interval.device.type
             device_group_status = ""
             if device_group == 'Light':
-                device_group_status = switches.lights_switch 
+                device_group_status = switches.lights_switch
             elif device_group == 'Fan':
-                device_group_status = switches.fans_switch 
+                device_group_status = switches.fans_switch
             elif device_group == 'Misting':
-                device_group_status = switches.misting_switch 
-            
+                device_group_status = switches.misting_switch
+
             logging.info(f'device {interval} status: {device_group_status}')
 
             if device_group_status == "timer":
@@ -66,17 +63,17 @@ class MyDaemon(Daemon):
                 else:
                     GPIO.output(light_pin, GPIO.HIGH)
                     print(f"{interval.start_time} not {now} not {interval.end_time}")
-            
 
-            elif device_group_status == "off":    # Always off. Ignores the timer
+
+            elif device_group_status == "off":  # Always off. Ignores the timer
                 logging.info(f'{interval} is by off switch')
                 light_pin = interval.device.pin_number
 
                 GPIO.setup(light_pin, GPIO.OUT)
                 GPIO.output(light_pin, GPIO.HIGH)
-            
-            
-            else: # Switch on
+
+
+            else:  # Switch on
                 logging.info(f'{interval} is by on switch')
                 light_pin = interval.device.pin_number
                 GPIO.setup(light_pin, GPIO.OUT)
@@ -88,12 +85,12 @@ class MyDaemon(Daemon):
         humidity_r, temperature_r = Adafruit_DHT.read_retry(11, 4)
         sen_read = Temp_humi_calls(temp=float(temperature_r), humidity=float(humidity_r))
         logging.info(f'temp-{sen_read.temp} ; humidity-{sen_read.humidity}')
-        #sen_read.save() # A problem with the save!!!! ####################################
+        # sen_read.save() # A problem with the save!!!! ####################################
 
     def screen_output(self, mylcd, curr_temp, curr_humi):
         # TODO: implement a timer for the screen
-        #mylcd.lcd_clear()   # Might be useless. should be removed
-        
+        # mylcd.lcd_clear()   # Might be useless. should be removed
+
         try:
             sensor_records = Temp_humi_calls.objects.last()
             curr_temp = sensor_records.temp
